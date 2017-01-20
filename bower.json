@@ -1,0 +1,21 @@
+{
+  "name": "purescript-template",
+  "authors": [
+    "aratama <aratama@example.com>"
+  ],
+  "description": "",
+  "main": "",
+  "license": "MIT",
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "purescript-console": "^2.0.0",
+    "purescript-halogen": "^0.12.0"
+  }
+}
