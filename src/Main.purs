@@ -1,42 +1,87 @@
 module Main where
 
+import Control.Applicative (pure)
+import Control.Bind (class Bind, bind, (>>=))
+import Control.Monad.Aff (Aff, attempt)
+import Control.Monad.Aff.Class (class MonadAff, liftAff)
 import Control.Monad.Eff (Eff)
-import Halogen (Component, ComponentDSL, ComponentHTML, HalogenEffects, component, modify, runUI)
-import Halogen.HTML.Events.Indexed (input_, onClick)
-import Halogen.HTML.Indexed (button, div_, h1_, p_, text)
-import Halogen.Util (awaitBody, runHalogenAff)
-import Prelude (type (~>), Unit, bind, not, pure)
+import Control.Monad.Eff.Exception (error)
+import Control.Monad.Error.Class (throwError)
+import Control.Monad.Except (runExcept)
+import Control.Monad.State.Class (class MonadState, get)
+import Data.Either (Either(..))
+import Data.Foreign (Foreign)
+import Data.Foreign.Class (readProp)
+import Data.Monoid ((<>))
+import Data.NaturalTransformation (type (~>))
+import Data.Show (show)
+import Data.Unit (Unit)
+import Data.Void (Void)
+import Halogen (Component)
+import Halogen.Aff.Util (runHalogenAff, awaitBody)
+import Halogen.Component (component)
+import Halogen.Effects (HalogenEffects)
+import Halogen.HTML (text)
+import Halogen.HTML.Core (HTML)
+import Halogen.HTML.Elements (br, button, div, h2, img)
+import Halogen.HTML.Events (input_, onClick)
+import Halogen.HTML.Properties (src)
+import Halogen.Query (action, put)
+import Halogen.VDom.Driver (runUI)
+import Network.HTTP.Affjax (AJAX)
+import Network.HTTP.Affjax (get) as Ajax
 
-data Query a = ToggleState a
+type State = {
+    topic :: String,
+    gifUrl :: String
+}
 
-type State = { on :: Boolean }
+data Query a = MorePlease a
 
-initialState :: State
-initialState = { on: false }
+type Effects eff = HalogenEffects (ajax :: AJAX | eff)
 
-ui :: forall g. Component State Query g
-ui = component { render, eval }
+render :: State -> HTML Void (Query Unit)
+render model = div [] [
+    h2 [] [text model.topic],
+    button [ onClick (input_ MorePlease) ] [ text "More Please!" ],
+    br [],
+    img [src model.gifUrl]
+]
+
+eval :: forall m eff. (MonadAff (Effects eff) m, MonadState State m, Bind m) => Query ~> m
+eval msg = case msg of
+    MorePlease next -> do
+        model <- get
+        let url = "https://api.giphy.com/v1/gifs/random?api_key=dc6zaTOxFJmzC&tag=" <> model.topic
+        response <- liftAff (attempt (Ajax.get url))
+        case response of
+            Left err -> pure next
+            Right res -> do
+                newUrl <- liftAff (decodeGifUrl res.response)
+                put model { gifUrl = newUrl }
+                pure next
+
   where
 
-    render :: State -> ComponentHTML Query
-    render state = div_ [
-        h1_ [text "Hello world!"],
-        p_ [text "Why not toggle this button:"],
-        button [
-            onClick (input_ ToggleState)
-        ] [
-            text if not state.on
-                then "Don't push me"
-                else "I said don't push me!"
-        ]
-    ]
+    decodeGifUrl :: Foreign -> Aff (Effects eff) String
+    decodeGifUrl value = do
+        let parsed = readProp "data" value >>= readProp "image_url"
+        case runExcept parsed of
+            Left err -> throwError (error (show err))
+            Right url -> pure url
 
-    eval :: Query ~> ComponentDSL State Query g
-    eval (ToggleState next) = do
-        modify (\state -> { on: not state.on })
-        pure next
+ui :: forall m t89 eff. (MonadAff (Effects eff) m) => Component HTML Query t89 m
+ui = component {
+    render,
+    eval,
+    initialState: init "cats"
+}
+  where
+    init :: String -> State
+    init topic = { topic, gifUrl: "waiting.gif" }
 
-main :: Eff (HalogenEffects ()) Unit
+main :: forall eff. Eff (Effects eff) Unit
 main = runHalogenAff do
     body <- awaitBody
-    runUI ui initialState body
+    io <- runUI ui body
+    io.query (action MorePlease)
