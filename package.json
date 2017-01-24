@@ -9,8 +9,8 @@
     },
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
-        "prebuild": "psc bower_components/purescript-*/src/**/*.purs src/**/*.purs",
-        "build": "psc-bundle output/**/*.js --module Main --main Main --output public/index.js"
+        "prebuild": "psc \"bower_components/purescript-*/src/**/*.purs\" \"src/**/*.purs\"",
+        "build": "psc-bundle \"output/**/*.js\" --module Main --main Main --output public/index.js"
     },
     "author": "",
     "license": "ISC"
