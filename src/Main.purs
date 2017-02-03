@@ -12,15 +12,16 @@ import Control.Monad.State.Class (class MonadState, get)
 import Data.Either (Either(..))
 import Data.Foreign (Foreign)
 import Data.Foreign.Class (readProp)
+import Data.Maybe (Maybe(..))
 import Data.Monoid ((<>))
 import Data.NaturalTransformation (type (~>))
 import Data.Show (show)
-import Data.Unit (Unit)
+import Data.Unit (Unit, unit)
 import Data.Void (Void)
 import Halogen (Component)
+import Halogen.Aff (HalogenEffects)
 import Halogen.Aff.Util (runHalogenAff, awaitBody)
 import Halogen.Component (component)
-import Halogen.Effects (HalogenEffects)
 import Halogen.HTML (text)
 import Halogen.HTML.Core (HTML)
 import Halogen.HTML.Elements (br, button, div, h2, img)
@@ -70,11 +71,12 @@ eval msg = case msg of
             Left err -> throwError (error (show err))
             Right url -> pure url
 
-ui :: forall m t89 eff. (MonadAff (Effects eff) m) => Component HTML Query t89 m
+ui :: forall i o m eff. (MonadAff (Effects eff) m) => Component HTML Query i o m
 ui = component {
     render,
     eval,
-    initialState: init "cats"
+    initialState: \_ -> init "cats",
+    receiver: \_ -> Nothing
 }
   where
     init :: String -> State
@@ -83,5 +85,5 @@ ui = component {
 main :: forall eff. Eff (Effects eff) Unit
 main = runHalogenAff do
     body <- awaitBody
-    io <- runUI ui body
+    io <- runUI ui unit body
     io.query (action MorePlease)
