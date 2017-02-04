@@ -16,7 +16,5 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "rollup-plugin-commonjs": "^7.0.0",
-    "rollup-plugin-purs": "^1.0.16"
   }
 }
