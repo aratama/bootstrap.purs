@@ -1,5 +1,5 @@
 {
-  "name": "purescript-bootstrap",
+  "name": "bootstrap.purs",
   "authors": [
     "aratama <aratama@example.com>"
   ],
@@ -16,7 +16,7 @@
   ],
   "dependencies": {
     "purescript-console": "^2.0.0",
-    "purescript-halogen": "06ea7a2",
+    "purescript-halogen": "v1.0.0-rc.2",
     "purescript-affjax": "^3.0.2"
   }
 }
