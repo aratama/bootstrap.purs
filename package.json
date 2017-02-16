@@ -17,6 +17,5 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "rimraf": "^2.5.4"
   }
 }
