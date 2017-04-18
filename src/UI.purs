@@ -1,7 +1,7 @@
 module UI (ui) where
 
 import Control.Applicative (pure)
-import Control.Bind (bind, (>>=))
+import Control.Bind (bind, (>>=), discard)
 import Control.Category ((<<<))
 import Control.Monad.Aff (Aff, attempt)
 import Control.Monad.Aff.Class (liftAff)
@@ -12,8 +12,8 @@ import Control.Monad.State (modify)
 import Control.Monad.State.Class (get)
 import Control.Plus ((<$))
 import Data.Either (Either(..), either)
-import Data.Foreign (Foreign)
-import Data.Foreign.Class (readProp)
+import Data.Foreign (Foreign, readString)
+import Data.Foreign.Index (readProp)
 import Data.Maybe (Maybe(..))
 import Data.Monoid ((<>))
 import Data.NaturalTransformation (type (~>))
@@ -46,7 +46,7 @@ eval = case _ of
 
     decodeGifUrl :: Foreign -> Aff (Effects eff) String
     decodeGifUrl value = do
-        let parsed = readProp "data" value >>= readProp "image_url"
+        let parsed = readProp "data" value >>= readProp "image_url" >>= readString
         either (throwError <<< error <<< show) pure (runExcept parsed)
 
 ui :: forall eff. Component HTML Query Input Output (Aff (Effects eff))

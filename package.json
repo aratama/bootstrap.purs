@@ -11,8 +11,8 @@
     "clean": "rimraf output .pulp-cache public/index.js",
     "clean-all": "rimraf output .pulp-cache public/index.js bower_components node_modules",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "prebuild": "psc \"bower_components/purescript-*/src/**/*.purs\" \"src/**/*.purs\"",
-    "build": "psc-bundle \"output/**/*.js\" --module Main --main Main --output public/index.js"
+    "prebuild": "purs compile \"bower_components/purescript-*/src/**/*.purs\" \"src/**/*.purs\"",
+    "build": "purs bundle \"output/**/*.js\" --module Main --main Main --output public/index.js"
   },
   "author": "",
   "license": "ISC",

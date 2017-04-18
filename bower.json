@@ -15,8 +15,9 @@
     "tests"
   ],
   "dependencies": {
-    "purescript-console": "^2.0.0",
-    "purescript-affjax": "^3.0.2",
-    "purescript-halogen": "^1.0.0"
+    "purescript-console": "^3.0.0",
+    "purescript-affjax": "^4.0.0",
+    "purescript-halogen": "^2.0.0",
+    "purescript-foreign": "^4.0.0"
   }
 }
