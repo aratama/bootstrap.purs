@@ -1,6 +1,6 @@
 module Main where
 
-import Control.Bind (bind, discard)
+import Control.Bind (bind)
 import Control.Monad.Eff (Eff)
 import Data.Unit (Unit)
 import Halogen.Aff.Util (runHalogenAff, awaitBody)
