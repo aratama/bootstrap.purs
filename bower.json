@@ -16,7 +16,7 @@
   ],
   "dependencies": {
     "purescript-affjax": "^5.0.0",
-    "purescript-halogen": "^3.0.1",
+    "purescript-halogen": "^3.1.2",
     "purescript-foreign": "^4.0.1"
   }
 }
