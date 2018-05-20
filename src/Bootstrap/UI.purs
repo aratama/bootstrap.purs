@@ -1,4 +1,4 @@
-module UI (ui) where
+module Bootstrap.UI (ui) where
 
 import Control.Applicative (pure)
 import Control.Bind (bind, (>>=), discard)
@@ -23,8 +23,8 @@ import Halogen (Component)
 import Halogen.Component (ComponentDSL, component)
 import Halogen.HTML.Core (HTML)
 import Network.HTTP.Affjax (get) as Ajax
-import Render (render)
-import Type (Input, Output, Query(..), State, Effects)
+import Bootstrap.Render (render)
+import Bootstrap.Type (Input, Output, Query(..), State, Effects)
 
 loading :: String
 loading = "loading.svg"

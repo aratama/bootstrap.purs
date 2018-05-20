@@ -1,4 +1,4 @@
-module Type where
+module Bootstrap.Type where
 
 import Data.Void (Void)
 import Halogen.Aff.Effects (HalogenEffects)

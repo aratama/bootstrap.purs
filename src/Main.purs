@@ -6,8 +6,8 @@ import Data.Unit (Unit)
 import Halogen.Aff.Util (runHalogenAff, awaitBody)
 import Halogen.Query (action)
 import Halogen.VDom.Driver (runUI)
-import Type (Effects, Query(MorePlease))
-import UI (ui)
+import Bootstrap.Type (Effects, Query(MorePlease))
+import Bootstrap.UI (ui)
 
 main :: forall eff. Eff (Effects eff) Unit
 main = runHalogenAff do
