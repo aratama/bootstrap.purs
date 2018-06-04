@@ -1,20 +1,21 @@
-module Bootstrap.UI (ui) where
+module Bootstrap.UI (ui, eval) where
+
+import Prelude
 
 import Bootstrap.Render (render)
-import Bootstrap.Type (Input, Output, Query(..), State, Giphy)
-import Control.Monad.State (modify)
+import Bootstrap.Type (Giphy, Input, Output, Query(..), State)
+import Control.Monad.State (class MonadState, modify)
 import Data.Either (Either(..))
 import Data.Maybe (Maybe(..))
 import Effect.Aff (Aff)
-import Effect.Aff.Class (liftAff)
+import Effect.Aff.Class (class MonadAff, liftAff)
 import Effect.Class.Console (errorShow)
 import Halogen (Component)
-import Halogen.Component (ComponentDSL, component)
+import Halogen.Component (component)
 import Halogen.HTML.Core (HTML)
 import Network.HTTP.Affjax (URL)
 import Network.HTTP.Affjax (get) as Ajax
 import Network.HTTP.Affjax.Response (string)
-import Prelude
 import Simple.JSON (readJSON)
 
 loading :: URL
@@ -23,7 +24,8 @@ loading = "loading.svg"
 giphy :: String -> URL
 giphy topic = "https://api.giphy.com/v1/gifs/random?api_key=dc6zaTOxFJmzC&tag=" <> topic
 
-eval :: Query ~> ComponentDSL State Query Output Aff
+-- eval :: Query ~> ComponentDSL State Query Output Aff
+eval :: forall m. MonadState State m => MonadAff m => Query ~> m
 eval = case _ of
     MorePlease next -> next <$ do
         state <- modify _ { gifUrl = loading }
