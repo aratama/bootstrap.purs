@@ -3,7 +3,11 @@ node_js:
   - "node"
 dist: trusty
 sudo: false
+
+before_install:
+  - npm -g install bower
+
 install:
   - npm install
-  - npm run bower
+  - bower update
   - npm run build

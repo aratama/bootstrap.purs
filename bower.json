@@ -17,6 +17,7 @@
   "dependencies": {
     "purescript-halogen": "^4.0.0",
     "purescript-affjax": "^6.0.0",
-    "purescript-simple-json": "^4.0.0"
+    "purescript-simple-json": "^4.0.0",
+    "purescript-node-process": "^6.0.0"
   }
 }

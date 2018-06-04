@@ -7,8 +7,10 @@ import Data.Tuple (Tuple(..))
 import Data.Unit (Unit)
 import Effect (Effect)
 import Effect.Aff (Aff, launchAff)
-import Effect.Class.Console (error, logShow)
-import Prelude (bind, discard, unit, void, when, (==))
+import Effect.Class (liftEffect)
+import Effect.Class.Console (errorShow, logShow)
+import Node.Process (exit)
+import Prelude (bind, discard, unit, void, when, ($), (==))
 
 main :: Effect Unit
 main = void do
@@ -22,8 +24,10 @@ main = void do
     
     launchAff do 
         Tuple a s <- runStateT action initial
+        
         when (s.gifUrl == "") do 
-            error "invalid state at gitUrl"
-                
+            errorShow "invalid state at gitUrl"
+            liftEffect $ exit 1
+
         logShow s.gifUrl
         
