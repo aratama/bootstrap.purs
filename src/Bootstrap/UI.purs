@@ -1,55 +1,42 @@
 module Bootstrap.UI (ui) where
 
-import Control.Applicative (pure)
-import Control.Bind (bind, (>>=), discard)
-import Control.Category ((<<<))
-import Control.Monad.Aff (Aff, attempt)
-import Control.Monad.Aff.Class (liftAff)
-import Control.Monad.Eff.Exception (error)
-import Control.Monad.Error.Class (throwError)
-import Control.Monad.Except (runExcept)
+import Bootstrap.Render (render)
+import Bootstrap.Type (Input, Output, Query(..), State, Giphy)
 import Control.Monad.State (modify)
 import Control.Monad.State.Class (get)
-import Control.Plus ((<$))
-import Data.Either (Either(..), either)
-import Data.Foreign (Foreign, readString)
-import Data.Foreign.Index (readProp)
+import Data.Either (Either(..))
 import Data.Maybe (Maybe(..))
-import Data.Monoid ((<>))
-import Data.NaturalTransformation (type (~>))
-import Data.Show (show)
-import Data.Unit (unit)
+import Effect.Aff (Aff)
+import Effect.Aff.Class (liftAff)
+import Effect.Class.Console (errorShow)
 import Halogen (Component)
 import Halogen.Component (ComponentDSL, component)
 import Halogen.HTML.Core (HTML)
+import Network.HTTP.Affjax (URL)
 import Network.HTTP.Affjax (get) as Ajax
-import Bootstrap.Render (render)
-import Bootstrap.Type (Input, Output, Query(..), State, Effects)
+import Network.HTTP.Affjax.Response (string)
+import Prelude
+import Simple.JSON (readJSON)
 
-loading :: String
+loading :: URL
 loading = "loading.svg"
 
-giphy :: String
-giphy = "https://api.giphy.com/v1/gifs/random?api_key=dc6zaTOxFJmzC&tag="
+giphy :: String -> URL
+giphy topic = "https://api.giphy.com/v1/gifs/random?api_key=dc6zaTOxFJmzC&tag=" <> topic
 
-eval :: forall eff. Query ~> ComponentDSL State Query Output (Aff (Effects eff))
+eval :: Query ~> ComponentDSL State Query Output Aff
 eval = case _ of
     MorePlease next -> next <$ do
-        modify _ { gifUrl = loading }
+        _ <- modify _ { gifUrl = loading }
         state <- get
-        liftAff (attempt (Ajax.get (giphy <> state.topic))) >>= case _ of
-            Left err -> pure unit
-            Right res -> do
-                newUrl <- liftAff (decodeGifUrl res.response)
-                modify _ { gifUrl = newUrl }
-  where
+        res <- liftAff $ Ajax.get string (giphy state.topic)
+        case readJSON res.response of 
+            Left err -> errorShow err 
+            Right (json :: Giphy) -> do 
+                _ <- modify _ { gifUrl = json.data.image_url }
+                pure unit
 
-    decodeGifUrl :: Foreign -> Aff (Effects eff) String
-    decodeGifUrl value = do
-        let parsed = readProp "data" value >>= readProp "image_url" >>= readString
-        either (throwError <<< error <<< show) pure (runExcept parsed)
-
-ui :: forall eff. Component HTML Query Input Output (Aff (Effects eff))
+ui :: Component HTML Query Input Output Aff
 ui = component {
     render,
     eval,
