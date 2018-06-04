@@ -27,14 +27,12 @@ giphy topic = "https://api.giphy.com/v1/gifs/random?api_key=dc6zaTOxFJmzC&tag=" 
 eval :: Query ~> ComponentDSL State Query Output Aff
 eval = case _ of
     MorePlease next -> next <$ do
-        _ <- modify _ { gifUrl = loading }
-        state <- get
+        state <- modify _ { gifUrl = loading }
         res <- liftAff $ Ajax.get string (giphy state.topic)
         case readJSON res.response of 
             Left err -> errorShow err 
-            Right (json :: Giphy) -> do 
-                _ <- modify _ { gifUrl = json.data.image_url }
-                pure unit
+            Right (json :: Giphy) -> void do 
+                modify _ { gifUrl = json.data.image_url }
 
 ui :: Component HTML Query Input Output Aff
 ui = component {
