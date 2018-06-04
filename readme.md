@@ -4,7 +4,7 @@ My own PureScript template project.
 
 ```
 npm install
-bower update
+npm run bower
 npm run build
 ```
 
