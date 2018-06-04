@@ -3,7 +3,6 @@ module Bootstrap.UI (ui) where
 import Bootstrap.Render (render)
 import Bootstrap.Type (Input, Output, Query(..), State, Giphy)
 import Control.Monad.State (modify)
-import Control.Monad.State.Class (get)
 import Data.Either (Either(..))
 import Data.Maybe (Maybe(..))
 import Effect.Aff (Aff)

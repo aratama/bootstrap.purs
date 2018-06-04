@@ -11,10 +11,16 @@
     "clean": "rimraf output .pulp-cache public/index.js",
     "clean-all": "rimraf output .pulp-cache public/index.js bower_components node_modules",
     "test": "echo \"Error: no test specified\" && exit 1",
+    "bower": "bower update",
     "prebuild": "purs compile \"bower_components/purescript-*/src/**/*.purs\" \"src/**/*.purs\"",
     "build": "purs bundle \"output/**/*.js\" --module Main --main Main --output public/index.js"
   },
   "author": "",
   "license": "ISC",
-  "devDependencies": {}
+  "devDependencies": {},
+  "dependencies": {
+    "bower": "^1.8.4",
+    "pulp": "^12.2.0",
+    "purescript": "^0.12.0"
+  }
 }
