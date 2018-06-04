@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/aratama/bootstrap.purs.svg?branch=master)](https://travis-ci.org/aratama/bootstrap.purs)
+
 My own PureScript template project.
 
 # build
