@@ -8,9 +8,9 @@ import Data.Unit (Unit)
 import Effect (Effect)
 import Effect.Aff (Aff, launchAff)
 import Effect.Class (liftEffect)
-import Effect.Class.Console (errorShow, logShow)
-import Node.Process (exit)
-import Prelude (bind, discard, unit, void, when, ($), (==))
+import Effect.Class.Console (logShow)
+import Prelude (bind, discard, unit, void, ($), (/=))
+import Test.Assert (assert)
 
 main :: Effect Unit
 main = void do
@@ -25,9 +25,7 @@ main = void do
     launchAff do 
         Tuple a s <- runStateT action initial
         
-        when (s.gifUrl == "") do 
-            errorShow "invalid state at gitUrl"
-            liftEffect $ exit 1
-
+        liftEffect $ assert (s.gifUrl /= "")
+            
         logShow s.gifUrl
         
