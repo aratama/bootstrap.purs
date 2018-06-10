@@ -3,6 +3,10 @@ node_js:
   - "node"
 dist: trusty
 sudo: false
+cache:
+  directories:
+    - node_modules
+    - bower_components
 
 before_install:
   - npm -g install bower
