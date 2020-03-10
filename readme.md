@@ -8,8 +8,8 @@ My own PureScript sample project.
 ## build
 
 ```
+npm install -g spago
 npm install
-npm run bower
 npm run build
 ```
 
