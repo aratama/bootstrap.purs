@@ -8,9 +8,8 @@ install:
   - ps: Install-Product node $env:nodejs_version
 
   # install modules
-  - npm -g install bower
+  - npm -g install spago
   - npm install
-  - bower update
   - npm run build
 
 # Post-install test scripts.

@@ -6,13 +6,12 @@ sudo: false
 cache:
   directories:
     - node_modules
-    - bower_components
+    - .spago
     - output
 
 before_install:
-  - npm -g install bower
+  - npm -g install spago
 
 install:
   - npm install
-  - bower update
   - npm run build
