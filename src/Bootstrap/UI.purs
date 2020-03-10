@@ -3,7 +3,7 @@ module Bootstrap.UI (component) where
 import Prelude
 import Bootstrap.Render (render)
 import Bootstrap.Type (Giphy, Message, Input, Query(..), Action(..), State)
-import Control.Monad.State (modify)
+import Control.Monad.State (modify, get)
 import Data.Either (Either(..))
 import Data.Maybe (Maybe(..))
 import Effect.Aff (Aff)
@@ -43,10 +43,10 @@ handleQuery :: forall a. Query a -> HalogenM State Action () Message Aff (Maybe 
 handleQuery = case _ of
   SetTopic topic next -> do
     state <- modify _ { topic = topic }
-    pure (Just (next state))
-  MorePlease next -> do
-    fetchImage
     pure (Just next)
+  GetTopic next -> do
+    state <- get
+    pure (Just (next state.topic))
 
 component :: Component HTML Query Input Message Aff
 component =
@@ -57,6 +57,7 @@ component =
           ( defaultEval
               { handleAction = handleAction
               , handleQuery = handleQuery
+              , initialize = Just FetchImage
               }
           )
     , initialState: \topic -> { topic, gifUrl: loading }

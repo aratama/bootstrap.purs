@@ -17,8 +17,8 @@ data Action
   = FetchImage
 
 data Query a
-  = MorePlease a
-  | SetTopic String (State -> a)
+  = SetTopic String a
+  | GetTopic (String -> a)
 
 type Input
   = String
