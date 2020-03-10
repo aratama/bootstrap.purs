@@ -1,16 +1,20 @@
 module Main where
 
-import Prelude (bind)
+import Prelude (bind, pure, discard, ($))
+import Effect.Console (log)
 import Effect (Effect)
-import Data.Unit (Unit)
+import Data.Unit (Unit, unit)
+import Halogen (tell, liftEffect)
 import Halogen.Aff.Util (runHalogenAff, awaitBody)
-import Halogen.Query (action)
 import Halogen.VDom.Driver (runUI)
-import Bootstrap.Type (Query(MorePlease))
-import Bootstrap.UI (ui)
+import Bootstrap.Type (Query(..))
+import Bootstrap.UI (component)
 
 main :: Effect Unit
-main = runHalogenAff do
+main =
+  runHalogenAff do
     body <- awaitBody
-    io <- runUI ui "cats" body
-    io.query (action MorePlease)
+    liftEffect $ log $ "start"
+    io <- runUI component "rabbits" body
+    _ <- io.query (tell (MorePlease))
+    pure unit

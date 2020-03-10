@@ -11,15 +11,15 @@
     "clean": "rimraf output .pulp-cache public/index.js",
     "clean-all": "rimraf output .pulp-cache public/index.js bower_components node_modules",
     "test": "pulp test",
-    "prebuild": "purs compile \"bower_components/purescript-*/src/**/*.purs\" \"src/**/*.purs\"",
-    "build": "purs bundle \"output/**/*.js\" --module Main --main Main --output public/index.js"
+    "build": "spago bundle --to public/index.js"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {},
   "dependencies": {
-    "pulp": "^12.2.0",
-    "purescript": "^0.12.0",
+    "pulp": "^12.4.2",
+    "purescript": "^0.13.6",
+    "purty": "^6.0.0",
     "xhr2": "^0.1.4"
   }
 }

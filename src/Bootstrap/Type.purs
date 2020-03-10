@@ -2,21 +2,26 @@ module Bootstrap.Type where
 
 import Data.Void (Void)
 
-type State = {
-    topic :: String,
-    gifUrl :: String
-}
-
-type Giphy = {
-    data :: {
-        image_url :: String
+type State
+  = { topic :: String
+    , gifUrl :: String
     }
-}
 
-data Query a = MorePlease a
+type Giphy
+  = { data ::
+        { image_url :: String
+        }
+    }
 
-type Input = String
+data Action
+  = FetchImage
 
-type Output = Void
+data Query a
+  = MorePlease a
+  | SetTopic String (State -> a)
 
+type Input
+  = String
 
+type Message
+  = Void

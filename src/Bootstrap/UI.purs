@@ -1,21 +1,20 @@
-module Bootstrap.UI (ui, eval) where
+module Bootstrap.UI (component) where
 
 import Prelude
-
 import Bootstrap.Render (render)
-import Bootstrap.Type (Giphy, Input, Output, Query(..), State)
-import Control.Monad.State (class MonadState, modify)
+import Bootstrap.Type (Giphy, Message, Input, Query(..), Action(..), State)
+import Control.Monad.State (modify)
 import Data.Either (Either(..))
 import Data.Maybe (Maybe(..))
 import Effect.Aff (Aff)
-import Effect.Aff.Class (class MonadAff, liftAff)
+import Effect.Aff.Class (liftAff)
 import Effect.Class.Console (errorShow)
-import Halogen (Component)
-import Halogen.Component (component)
+import Halogen (HalogenM, Component, mkEval, defaultEval)
+import Halogen.Component (mkComponent)
 import Halogen.HTML.Core (HTML)
-import Network.HTTP.Affjax (URL)
-import Network.HTTP.Affjax (get) as Ajax
-import Network.HTTP.Affjax.Response (string)
+import Affjax (URL, printError)
+import Affjax (get) as Ajax
+import Affjax.ResponseFormat (string)
 import Simple.JSON (readJSON)
 
 loading :: URL
@@ -24,21 +23,41 @@ loading = "loading.svg"
 giphy :: String -> URL
 giphy topic = "https://api.giphy.com/v1/gifs/random?api_key=dc6zaTOxFJmzC&tag=" <> topic
 
--- eval :: Query ~> ComponentDSL State Query Output Aff
-eval :: forall m. MonadState State m => MonadAff m => Query ~> m
-eval = case _ of
-    MorePlease next -> next <$ do
-        state <- modify _ { gifUrl = loading }
-        res <- liftAff $ Ajax.get string (giphy state.topic)
-        case readJSON res.response of 
-            Left err -> errorShow err 
-            Right (json :: Giphy) -> void do 
-                modify _ { gifUrl = json.data.image_url }
+fetchImage :: HalogenM State Action () Message Aff Unit
+fetchImage = do
+  state <- modify _ { gifUrl = loading }
+  res <- liftAff $ Ajax.get string (giphy state.topic)
+  case res of
+    Left err -> errorShow (printError err)
+    Right result -> case readJSON result.body of
+      Left err -> errorShow err
+      Right (json :: Giphy) ->
+        void do
+          modify _ { gifUrl = json.data.image_url }
 
-ui :: Component HTML Query Input Output Aff
-ui = component {
-    render,
-    eval,
-    initialState: \topic -> { topic, gifUrl: loading },
-    receiver: \_ -> Nothing
-}
+handleAction :: Action -> HalogenM State Action () Message Aff Unit
+handleAction = case _ of
+  FetchImage -> fetchImage
+
+handleQuery :: forall a. Query a -> HalogenM State Action () Message Aff (Maybe a)
+handleQuery = case _ of
+  SetTopic topic next -> do
+    state <- modify _ { topic = topic }
+    pure (Just (next state))
+  MorePlease next -> do
+    fetchImage
+    pure (Just next)
+
+component :: Component HTML Query Input Message Aff
+component =
+  mkComponent
+    { render
+    , eval:
+        mkEval
+          ( defaultEval
+              { handleAction = handleAction
+              , handleQuery = handleQuery
+              }
+          )
+    , initialState: \topic -> { topic, gifUrl: loading }
+    }

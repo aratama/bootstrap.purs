@@ -4,6 +4,7 @@ bower_components
 .psc-ide-port
 .psc-package
 public/index.js
+.spago
 
 # Windows image file caches
 Thumbs.db
