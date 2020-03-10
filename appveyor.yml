@@ -10,7 +10,7 @@ install:
   # install modules
   - npm -g install spago
   - npm install
-  - npm run build
+  - npm run build-ci
 
 # Post-install test scripts.
 test_script:
