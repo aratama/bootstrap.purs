@@ -12,6 +12,11 @@ install:
   - npm install
   - npm run build-ci
 
+build_script:
+  - npm -g install spago
+  - npm install
+  - npm run build-ci
+
 # Post-install test scripts.
 test_script:
   # Output useful info for debugging.
@@ -21,4 +26,4 @@ test_script:
   - npm test
 
 # Don't actually build.
-build: Script
+build: off
