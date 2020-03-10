@@ -10,7 +10,7 @@
   "scripts": {
     "clean": "rimraf output .pulp-cache public/index.js",
     "clean-all": "rimraf output .pulp-cache public/index.js bower_components node_modules",
-    "test": "pulp test",
+    "test": "spago test",
     "build": "spago bundle --to public/index.js",
     "build-ci": "spago bundle-app --to public/index.js"
   },
